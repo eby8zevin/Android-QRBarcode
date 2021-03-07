@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">QRBarcode</string>
+
+    <string name="AdMob_Application_ID">ca-app-pub-8638037215789792~4727326309</string>
+    <string name="AdMob_Banner_Ads_ID">ca-app-pub-8638037215789792/7935494830</string>
+    <string name="AdMob_Interstitial_Ads_ID">ca-app-pub-8638037215789792/1721440279</string>
+    <string name="testBanner">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="testInterstitial">ca-app-pub-3940256099942544/1033173712</string>
+    <string name="about">About</string>
+    <string name="version">Version 1.0</string>
+</resources>
