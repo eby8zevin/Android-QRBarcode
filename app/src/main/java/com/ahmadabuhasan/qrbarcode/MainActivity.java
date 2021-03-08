@@ -3,7 +3,6 @@ package com.ahmadabuhasan.qrbarcode;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -15,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.ads.AdError;
@@ -37,44 +35,42 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class MainActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
 
-    private static long back_pressed;
-    private static final int MY_CAMERA_REQUEST_CODE = 100;
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    private AdView adView;
-    public InterstitialAd interstitialAd;
-    private ZXingScannerView ScannerView;
-
+    private static final int PERMISSION_CODE = 100;
+    private static final String FLASH_STATE = "FLASH_STATE";
+    private ZXingScannerView zXingScannerView;
+    private boolean flashlight;
     ImageView flashOff, flashOn;
+    private AdView adView;
+    private InterstitialAd interstitialAd;
+    private static long back_pressed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.flashOff = findViewById(R.id.flashOff);
-        this.flashOn = findViewById(R.id.flashOn);
-
-        this.flashOff.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                flashOff.setVisibility(View.GONE);
-                flashOn.setVisibility(View.VISIBLE);
-
-            }
-        });
-
-        this.flashOn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                flashOff.setVisibility(View.VISIBLE);
-                flashOn.setVisibility(View.GONE);
-
-            }
-        });
-
         if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_REQUEST_CODE);
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSION_CODE);
         }
+
+        flashOff = findViewById(R.id.flashOff);
+        flashOn = findViewById(R.id.flashOn);
+
+        flashOff.setOnClickListener(v -> {
+            flashOff.setVisibility(View.GONE);
+            flashOn.setVisibility(View.VISIBLE);
+
+            flashlight = !flashlight;
+            zXingScannerView.setFlash(flashlight);
+        });
+
+        flashOn.setOnClickListener(v -> {
+            flashOff.setVisibility(View.VISIBLE);
+            flashOn.setVisibility(View.GONE);
+
+            flashlight = !flashlight;
+            zXingScannerView.setFlash(flashlight);
+        });
 
         MobileAds.initialize(this, initializationStatus -> {
 
@@ -86,22 +82,27 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         adView.loadAd(adRequest);
 
         ViewGroup contentFrame = findViewById(R.id.content_frame);
-        ZXingScannerView zXingScannerView = new ZXingScannerView(this);
-        ScannerView = zXingScannerView;
-        ScannerView.startCamera();
-        ScannerView.setResultHandler(this);
+        zXingScannerView = new ZXingScannerView(this);
         contentFrame.addView(zXingScannerView);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(FLASH_STATE, flashlight);
     }
 
     public void onResume() {
         super.onResume();
-        this.ScannerView.setResultHandler(this);
-        this.ScannerView.startCamera();
+        zXingScannerView.setResultHandler(this);
+        zXingScannerView.setAspectTolerance(0.2f);
+        zXingScannerView.startCamera();
+        zXingScannerView.setFlash(flashlight);
     }
 
     public void onDestroy() {
         super.onDestroy();
-        this.ScannerView.stopCamera();
+        zXingScannerView.stopCamera();
     }
 
     @Override
@@ -116,28 +117,13 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == MY_CAMERA_REQUEST_CODE) {
+        if (requestCode == PERMISSION_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Camera Permission Granted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Camera permission granted", Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(this, "Camera Permission Denied", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Camera permission denied", Toast.LENGTH_LONG).show();
             }
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.optionmenu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.about) {
-            startActivity(new Intent(this, AboutActivity.class));
-        }
-        return true;
     }
 
     public void interstitialAdsShow() {
@@ -156,6 +142,21 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
                         Log.d("interstitialAd", "failed");
                     }
                 });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.optionmenu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.about) {
+            startActivity(new Intent(this, AboutActivity.class));
+        }
+        return true;
     }
 
     public void onBackPressed() {
