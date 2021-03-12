@@ -25,6 +25,8 @@ public class AboutActivity extends AppCompatActivity {
         MobileAds.initialize(this, initializationStatus -> {
 
         });
+        new Utils().interstitialAdsShow(this);
+
         AdView adView = findViewById(R.id.adViewAbout);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
