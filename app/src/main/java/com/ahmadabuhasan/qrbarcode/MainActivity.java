@@ -1,10 +1,11 @@
 package com.ahmadabuhasan.qrbarcode;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Vibrator;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,14 +17,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.FullScreenContentCallback;
-import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.interstitial.InterstitialAd;
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.zxing.Result;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -40,8 +36,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     private ZXingScannerView zXingScannerView;
     private boolean flashlight;
     ImageView flashOff, flashOn;
-    private AdView adView;
-    private InterstitialAd interstitialAd;
+    AdView adView;
     private static long back_pressed;
 
     @Override
@@ -75,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         MobileAds.initialize(this, initializationStatus -> {
 
         });
-        interstitialAdsShow();
+        new Utils().interstitialAdsShow(this);
 
         adView = findViewById(R.id.adViewCamera);
         AdRequest adRequest = new AdRequest.Builder().build();
@@ -112,6 +107,8 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_TEXT, rawResult.toString());
         startActivity(Intent.createChooser(intent, "Share via"));
+        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.vibrate(300);
     }
 
     @Override
@@ -124,24 +121,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
                 Toast.makeText(this, "Camera permission denied", Toast.LENGTH_LONG).show();
             }
         }
-    }
-
-    public void interstitialAdsShow() {
-        InterstitialAd.load(this, getResources().getString(R.string.AdMob_Interstitial_Ads_ID),
-                new AdRequest.Builder().build(),
-                new InterstitialAdLoadCallback() {
-                    @Override
-                    public void onAdLoaded(@NonNull InterstitialAd interstitial) {
-                        interstitialAd = interstitial;
-                        Log.d("interstitialAd", "show");
-                    }
-
-                    @Override
-                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                        interstitialAd = null;
-                        Log.d("interstitialAd", "failed");
-                    }
-                });
     }
 
     @Override
@@ -162,31 +141,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     public void onBackPressed() {
         if (back_pressed + 2000 > System.currentTimeMillis()) {
             finishAffinity();
-            if (interstitialAd != null) {
-                interstitialAd.show(MainActivity.this);
-
-                interstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
-                    @Override
-                    public void onAdDismissedFullScreenContent() {
-                        interstitialAdsShow();
-                        MainActivity.super.onBackPressed();
-                        Log.d("interstitialAd", "onAdDismissedFullScreenContent: ");
-                    }
-
-                    @Override
-                    public void onAdFailedToShowFullScreenContent(AdError adError) {
-                        Log.d("interstitialAd", "onAdFailedToShowFullScreenContent: ");
-                    }
-
-                    @Override
-                    public void onAdShowedFullScreenContent() {
-                        interstitialAd = null;
-                        Log.d("interstitialAd", "onAdShowedFullScreenContent: ");
-                    }
-                });
-            } else {
-                super.onBackPressed();
-            }
         } else {
             Toast.makeText(this, "Press once again to exit", Toast.LENGTH_SHORT).show();
         }
