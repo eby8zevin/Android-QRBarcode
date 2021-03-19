@@ -2,11 +2,12 @@ plugins {
     id 'com.android.application'
 }
 
-def getBuildDate() {
+static def getBuildDate() {
     def date = new Date()
     def formattedDate = date.format("yyyy-MM-dd'T'HH:mm:ss'Z'")
     return formattedDate
 }
+
 def BUILD_DATE = getBuildDate()
 
 def keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -37,17 +38,17 @@ android {
     }
 
     buildTypes {
+        release {
+            versionNameSuffix " build-" + BUILD_DATE
+            signingConfig signingConfigs.config
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
         debug {
             signingConfig signingConfigs.config
         }
-        release {
-            versionNameSuffix " build-" + BUILD_DATE
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
-        }
     }
-    
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
