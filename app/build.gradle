@@ -30,16 +30,16 @@ android {
     }
 
     buildTypes {
+        debug {
+            signingConfig signingConfigs.config
+        }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
         }
-        debug {
-            signingConfig signingConfigs.config
-            minifyEnabled true
-        }
     }
+    
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
