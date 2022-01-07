@@ -8,4 +8,6 @@
     <string name="testInterstitial">ca-app-pub-3940256099942544/1033173712</string>
     <string name="about">About</string>
     <string name="version">Version:\u0020</string>
+    <string name="flashOn">Flash On</string>
+    <string name="flashOff">Flash Off</string>
 </resources>
