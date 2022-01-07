@@ -7,29 +7,34 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.ahmadabuhasan.qrbarcode.databinding.ActivityAboutBinding;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 
 import java.util.Objects;
 
 public class AboutActivity extends AppCompatActivity {
 
+    private ActivityAboutBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_about);
+        binding = ActivityAboutBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
         setTitle("About");
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
+        binding.version.setText(String.format("%s%s", getResources().getString(R.string.version), BuildConfig.VERSION_NAME));
 
         MobileAds.initialize(this, initializationStatus -> {
 
         });
         new Utils().interstitialAdsShow(this);
 
-        AdView adView = findViewById(R.id.adViewAbout);
         AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        binding.adViewAbout.loadAd(adRequest);
     }
 
     @Override
