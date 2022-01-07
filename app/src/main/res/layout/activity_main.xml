@@ -33,16 +33,16 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@color/white"
-                android:src="@drawable/ic_flash_on"
-                tools:ignore="ContentDescription" />
+                android:contentDescription="@string/flashOn"
+                android:src="@drawable/ic_flash_on" />
 
             <ImageView
                 android:id="@+id/flashOff"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@color/white"
-                android:src="@drawable/ic_flash_off"
-                tools:ignore="ContentDescription" />
+                android:contentDescription="@string/flashOff"
+                android:src="@drawable/ic_flash_off" />
 
         </RelativeLayout>
 
