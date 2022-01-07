@@ -10,15 +10,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.ahmadabuhasan.qrbarcode.databinding.ActivityMainBinding;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.zxing.Result;
 
@@ -35,33 +33,30 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     private static final String FLASH_STATE = "FLASH_STATE";
     private ZXingScannerView zXingScannerView;
     private boolean flashlight;
-    ImageView flashOff, flashOn;
-    AdView adView;
     private static long back_pressed;
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSION_CODE);
         }
 
-        flashOff = findViewById(R.id.flashOff);
-        flashOn = findViewById(R.id.flashOn);
-
-        flashOff.setOnClickListener(v -> {
-            flashOff.setVisibility(View.GONE);
-            flashOn.setVisibility(View.VISIBLE);
+        binding.flashOff.setOnClickListener(v -> {
+            binding.flashOff.setVisibility(View.GONE);
+            binding.flashOn.setVisibility(View.VISIBLE);
 
             flashlight = !flashlight;
             zXingScannerView.setFlash(flashlight);
         });
 
-        flashOn.setOnClickListener(v -> {
-            flashOff.setVisibility(View.VISIBLE);
-            flashOn.setVisibility(View.GONE);
+        binding.flashOn.setOnClickListener(v -> {
+            binding.flashOff.setVisibility(View.VISIBLE);
+            binding.flashOn.setVisibility(View.GONE);
 
             flashlight = !flashlight;
             zXingScannerView.setFlash(flashlight);
@@ -72,13 +67,11 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         });
         new Utils().interstitialAdsShow(this);
 
-        adView = findViewById(R.id.adViewCamera);
         AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        binding.adViewCamera.loadAd(adRequest);
 
-        ViewGroup contentFrame = findViewById(R.id.content_frame);
         zXingScannerView = new ZXingScannerView(this);
-        contentFrame.addView(zXingScannerView);
+        binding.contentFrame.addView(zXingScannerView);
     }
 
     @Override
