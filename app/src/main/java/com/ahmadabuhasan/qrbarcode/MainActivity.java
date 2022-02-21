@@ -132,13 +132,13 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     }
 
     public void onBackPressed() {
-        if (back_pressed + 2000 > System.currentTimeMillis()) {
+        if (back_pressed + 3000 > System.currentTimeMillis()) {
             finishAffinity();
             if (Utils.interstitialAd.isLoaded()) {
                 Utils.interstitialAd.show();
             } else {
-                finish();
                 super.onBackPressed();
+                finishAndRemoveTask();
             }
         } else {
             Toast.makeText(this, "Press once again to exit", Toast.LENGTH_SHORT).show();
