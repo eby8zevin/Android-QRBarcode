@@ -138,9 +138,10 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
             if (Utils.interstitialAd.isLoaded()) {
                 Utils.interstitialAd.show();
             } else {
+                finish();
                 super.onBackPressed();
-                finishAndRemoveTask();
             }
+            finishAndRemoveTask();
         } else {
             Toast.makeText(this, "Press once again to exit", Toast.LENGTH_SHORT).show();
         }
