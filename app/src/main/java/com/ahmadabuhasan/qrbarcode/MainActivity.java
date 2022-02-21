@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     public void onDestroy() {
         super.onDestroy();
         zXingScannerView.stopCamera();
+        binding = null;
     }
 
     @Override
