@@ -1,6 +1,5 @@
 package com.ahmadabuhasan.qrbarcode;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -22,8 +21,8 @@ public class AboutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityAboutBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
         setTitle("About");
+
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         binding.version.setText(String.format("%s%s", getResources().getString(R.string.version), BuildConfig.VERSION_NAME));
@@ -38,10 +37,17 @@ public class AboutActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        binding = null;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        Intent back = new Intent(this, MainActivity.class);
-        back.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(back);
+        if (item.getItemId() == android.R.id.home) {
+            super.onBackPressed();
+            finish();
+        }
         return true;
     }
 }
