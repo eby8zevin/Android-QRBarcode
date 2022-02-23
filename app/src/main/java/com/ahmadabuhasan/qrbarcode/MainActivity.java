@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     private static final String FLASH_STATE = "FLASH_STATE";
     private ZXingScannerView zXingScannerView;
     private boolean flashlight;
-    private static long back_pressed;
+    private static long pressedTime;
     private ActivityMainBinding binding;
 
     @Override
@@ -133,18 +133,18 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     }
 
     public void onBackPressed() {
-        if (back_pressed + 3000 > System.currentTimeMillis()) {
-            finishAffinity();
+        if (pressedTime + 2000 > System.currentTimeMillis()) {
+            finishAndRemoveTask();
             if (Utils.interstitialAd.isLoaded()) {
                 Utils.interstitialAd.show();
             } else {
-                finish();
                 super.onBackPressed();
+                finish();
             }
             finishAndRemoveTask();
         } else {
             Toast.makeText(this, "Press once again to exit", Toast.LENGTH_SHORT).show();
         }
-        back_pressed = System.currentTimeMillis();
+        pressedTime = System.currentTimeMillis();
     }
 }
