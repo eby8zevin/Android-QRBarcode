@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,6 +17,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.ahmadabuhasan.qrbarcode.databinding.ActivityMainBinding;
+import com.configcat.ConfigCatClient;
+import com.configcat.LogLevel;
+import com.configcat.User;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
 import com.google.zxing.Result;
@@ -29,6 +33,7 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class MainActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
 
+    private static final String TAG = "ConfigCat";
     private static final int PERMISSION_CODE = 100;
     private static final String FLASH_STATE = "FLASH_STATE";
     private ZXingScannerView zXingScannerView;
@@ -72,6 +77,8 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
         zXingScannerView = new ZXingScannerView(this);
         binding.contentFrame.addView(zXingScannerView);
+
+        ConfigCat();
     }
 
     @Override
@@ -146,5 +153,19 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
             Toast.makeText(this, "Press once again to exit", Toast.LENGTH_SHORT).show();
         }
         pressedTime = System.currentTimeMillis();
+    }
+
+    private void ConfigCat() {
+        String SDK = BuildConfig.SDK;
+        ConfigCatClient client = ConfigCatClient.newBuilder()
+                .logLevel(LogLevel.INFO)
+                .logLevel(LogLevel.DEBUG)
+                .build(SDK);
+
+        User user = User.newBuilder()
+                .email("example@email.com")
+                .build(SDK);
+
+        Log.d(TAG, "ConfigCat: " + client + user);
     }
 }
