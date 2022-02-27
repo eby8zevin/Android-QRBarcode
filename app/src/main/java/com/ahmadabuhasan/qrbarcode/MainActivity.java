@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
@@ -104,10 +105,20 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     @Override
     public void handleResult(Result rawResult) {
         Toast.makeText(this, rawResult.toString(), Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_TEXT, rawResult.toString());
-        startActivity(Intent.createChooser(intent, "Share via"));
+        String text = rawResult.toString();
+
+        if (!text.startsWith("https://") && !text.startsWith("http://")) {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_TEXT, text);
+            startActivity(Intent.createChooser(intent, "Share"));
+        } else {
+            text = "http://" + text;
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(text));
+            startActivity(Intent.createChooser(i, "Share"));
+        }
+
         Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         vibrator.vibrate(300);
     }
