@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -137,8 +136,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.optionmenu, menu);
+        getMenuInflater().inflate(R.menu.optionmenu, menu);
         return true;
     }
 
@@ -147,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         if (item.getItemId() == R.id.about) {
             startActivity(new Intent(this, AboutActivity.class));
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     public void onBackPressed() {
