@@ -21,9 +21,10 @@ public class AboutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityAboutBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        setTitle("About");
 
-        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("About QRBarcode");
 
         binding.version.setText(String.format("%s%s", getResources().getString(R.string.version), BuildConfig.VERSION_NAME));
 
@@ -48,6 +49,6 @@ public class AboutActivity extends AppCompatActivity {
             super.onBackPressed();
             finish();
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 }
