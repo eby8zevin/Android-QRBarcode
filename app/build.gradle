@@ -10,9 +10,9 @@ static def getBuildDate() {
     return formattedDate
 }
 
-def localPropertiesFile = rootProject.file("local.properties")
+/*def localPropertiesFile = rootProject.file("local.properties")
 def localProperties = new Properties()
-localProperties.load(new FileInputStream(localPropertiesFile))
+localProperties.load(new FileInputStream(localPropertiesFile))*/
 
 /*def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
@@ -39,7 +39,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "SDK", localProperties["Config_Cat"])
+        //buildConfigField("String", "SDK", localProperties["Config_Cat"])
     }
 
     buildTypes {
