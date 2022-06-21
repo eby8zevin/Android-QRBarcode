@@ -170,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     }
 
     private void ConfigCat() {
-        String SDK = BuildConfig.SDK;
+        String SDK = System.getenv("CONFIG_CAT");
         ConfigCatClient client = ConfigCatClient.newBuilder()
                 .logLevel(LogLevel.INFO)
                 .logLevel(LogLevel.DEBUG)
