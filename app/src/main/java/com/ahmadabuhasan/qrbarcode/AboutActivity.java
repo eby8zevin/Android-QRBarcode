@@ -32,7 +32,6 @@ public class AboutActivity extends AppCompatActivity {
 
         });
         new Utils().interstitialAdsShow(this);
-
         AdRequest adRequest = new AdRequest.Builder().build();
         binding.adViewAbout.loadAd(adRequest);
     }
@@ -46,7 +45,7 @@ public class AboutActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            super.onBackPressed();
+            onBackPressed();
             finish();
         }
         return super.onOptionsItemSelected(item);
