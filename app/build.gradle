@@ -19,7 +19,7 @@ android {
         config {
             keyAlias localProperties['keyAlias']
             keyPassword localProperties['keyPassword']
-            storeFile = file('STORE_FILE')
+            storeFile file(localProperties['storeFile'])
             storePassword localProperties['storePassword']
         }
     }
