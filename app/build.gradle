@@ -10,13 +10,13 @@ static def getBuildDate() {
     return formattedDate
 }
 
-def keystorePropertiesFile = rootProject.file("keystore.properties")
-def keystoreProperties = new Properties()
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-
 def localPropertiesFile = rootProject.file("local.properties")
 def localProperties = new Properties()
 localProperties.load(new FileInputStream(localPropertiesFile))
+
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
     signingConfigs {
@@ -28,18 +28,17 @@ android {
         }
     }
 
-    compileSdkVersion 31
+    compileSdkVersion 32
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.ahmadabuhasan.qrbarcode"
         minSdkVersion 23
-        targetSdkVersion 31
+        targetSdkVersion 32
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        signingConfig signingConfigs.config
         buildConfigField("String", "SDK", localProperties["Config_Cat"])
     }
 
@@ -51,7 +50,7 @@ android {
             signingConfig signingConfigs.config
         }
         debug {
-            signingConfig signingConfigs.config
+            debuggable true
         }
     }
 
