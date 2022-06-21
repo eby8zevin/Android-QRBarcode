@@ -10,7 +10,7 @@ static def getBuildDate() {
     return formattedDate
 }
 
-def localPropertiesFile = rootProject.file("local.properties")
+def localPropertiesFile = rootProject.file("secrets.properties")
 def localProperties = new Properties()
 localProperties.load(new FileInputStream(localPropertiesFile))
 
