@@ -33,12 +33,12 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class MainActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
 
-    private static final String TAG = "ConfigCat";
     private static final int PERMISSION_CODE = 100;
+    private static final String TAG = "ConfigCat";
     private static final String FLASH_STATE = "FLASH_STATE";
-    private ZXingScannerView zXingScannerView;
-    private boolean flashlight;
     private static long pressedTime;
+    private boolean flashlight;
+    private ZXingScannerView zXingScannerView;
     private ActivityMainBinding binding;
 
     @Override
@@ -51,6 +51,23 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
             requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSION_CODE);
         }
 
+        MobileAds.initialize(this, initializationStatus -> {
+
+        });
+        new Utils().interstitialAdsShow(this);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        binding.adViewCamera.loadAd(adRequest);
+
+        zXingScannerView = new ZXingScannerView(this);
+        binding.contentFrame.addView(zXingScannerView);
+
+        flashOff();
+        flashOn();
+
+        ConfigCat();
+    }
+
+    private void flashOff() {
         binding.flashOff.setOnClickListener(v -> {
             binding.flashOff.setVisibility(View.GONE);
             binding.flashOn.setVisibility(View.VISIBLE);
@@ -58,7 +75,9 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
             flashlight = !flashlight;
             zXingScannerView.setFlash(flashlight);
         });
+    }
 
+    private void flashOn() {
         binding.flashOn.setOnClickListener(v -> {
             binding.flashOff.setVisibility(View.VISIBLE);
             binding.flashOn.setVisibility(View.GONE);
@@ -66,19 +85,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
             flashlight = !flashlight;
             zXingScannerView.setFlash(flashlight);
         });
-
-        MobileAds.initialize(this, initializationStatus -> {
-
-        });
-        new Utils().interstitialAdsShow(this);
-
-        AdRequest adRequest = new AdRequest.Builder().build();
-        binding.adViewCamera.loadAd(adRequest);
-
-        zXingScannerView = new ZXingScannerView(this);
-        binding.contentFrame.addView(zXingScannerView);
-
-        ConfigCat();
     }
 
     @Override
@@ -106,16 +112,15 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         Toast.makeText(this, rawResult.toString(), Toast.LENGTH_LONG).show();
         String text = rawResult.toString();
 
-        if (!text.startsWith("https://") && !text.startsWith("http://")) {
+        if (text.startsWith("https://") || text.startsWith("http://")) {
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(text));
+            startActivity(Intent.createChooser(i, "Open with"));
+        } else {
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
             intent.putExtra(Intent.EXTRA_TEXT, text);
             startActivity(Intent.createChooser(intent, "Share"));
-        } else {
-            text = "http://" + text;
-            Intent i = new Intent(Intent.ACTION_VIEW);
-            i.setData(Uri.parse(text));
-            startActivity(Intent.createChooser(i, "Share"));
         }
 
         Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
