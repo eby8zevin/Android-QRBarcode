@@ -4,9 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
+    android:background="#FF000000"
     android:orientation="vertical"
     tools:context=".MainActivity">
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:adSize="BANNER"
+        app:adUnitId="@string/AdMob_Banner_Ads_ID" />
 
     <FrameLayout
         android:id="@+id/content_frame"
@@ -18,16 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="5dp"
-        android:gravity="center">
-
-        <ImageView
-            android:id="@+id/flashOn"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/round_outline"
-            android:contentDescription="@string/flashOn"
-            android:src="@drawable/ic_flash_on" />
+        android:paddingBottom="5dp">
 
         <ImageView
             android:id="@+id/flashOff"
@@ -37,20 +35,13 @@
             android:contentDescription="@string/flashOff"
             android:src="@drawable/ic_flash_off" />
 
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp">
-
-        <com.google.android.gms.ads.AdView
-            android:id="@+id/adViewCamera"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:adSize="BANNER"
-            app:adUnitId="@string/AdMob_Banner_Ads_ID" />
-
+        <ImageView
+            android:id="@+id/flashOn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/round_outline"
+            android:contentDescription="@string/flashOn"
+            android:src="@drawable/ic_flash_on" />
     </RelativeLayout>
 
 </LinearLayout>
