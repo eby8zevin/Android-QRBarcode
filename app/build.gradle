@@ -12,9 +12,9 @@ static def getBuildDate() {
 
 /*def localPropertiesFile = rootProject.file("local.properties")
 def localProperties = new Properties()
-localProperties.load(new FileInputStream(localPropertiesFile))*/
+localProperties.load(new FileInputStream(localPropertiesFile))
 
-/*def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))*/
 
