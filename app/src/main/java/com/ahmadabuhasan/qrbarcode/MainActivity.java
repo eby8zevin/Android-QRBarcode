@@ -56,31 +56,31 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         });
         new Utils().interstitialAdsShow(this);
         AdRequest adRequest = new AdRequest.Builder().build();
-        binding.adViewCamera.loadAd(adRequest);
+        binding.adView.loadAd(adRequest);
 
         zXingScannerView = new ZXingScannerView(this);
         binding.contentFrame.addView(zXingScannerView);
 
-        flashOff();
         flashOn();
+        flashOff();
 
         ConfigCat();
-    }
-
-    private void flashOff() {
-        binding.flashOff.setOnClickListener(v -> {
-            binding.flashOff.setVisibility(View.GONE);
-            binding.flashOn.setVisibility(View.VISIBLE);
-
-            flashlight = !flashlight;
-            zXingScannerView.setFlash(flashlight);
-        });
     }
 
     private void flashOn() {
         binding.flashOn.setOnClickListener(v -> {
             binding.flashOff.setVisibility(View.VISIBLE);
             binding.flashOn.setVisibility(View.GONE);
+
+            flashlight = !flashlight;
+            zXingScannerView.setFlash(flashlight);
+        });
+    }
+
+    private void flashOff() {
+        binding.flashOff.setOnClickListener(v -> {
+            binding.flashOff.setVisibility(View.GONE);
+            binding.flashOn.setVisibility(View.VISIBLE);
 
             flashlight = !flashlight;
             zXingScannerView.setFlash(flashlight);
@@ -98,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         zXingScannerView.setResultHandler(this);
         zXingScannerView.setAspectTolerance(0.2f);
         zXingScannerView.startCamera();
-        zXingScannerView.setFlash(flashlight);
     }
 
     public void onDestroy() {
@@ -170,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     }
 
     private void ConfigCat() {
-        String SDK = System.getenv("CONFIG_CAT");
+        String SDK = System.getenv("CONFIG_CAT"); //BuildConfig.SDK;
         ConfigCatClient client = ConfigCatClient.newBuilder()
                 .logLevel(LogLevel.INFO)
                 .logLevel(LogLevel.DEBUG)
