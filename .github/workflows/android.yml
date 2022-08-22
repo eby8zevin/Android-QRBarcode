@@ -20,6 +20,11 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
+    - name: Access ConfigCat
+      env:
+        SDK_KEY: $
+      run: echo SDK_KEY=\"$SDK_KEY\" > ./local.properties
+
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
