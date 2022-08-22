@@ -14,7 +14,7 @@ String getSdkKey() {
     def propFile = rootProject.file("./local.properties")
     def properties = new Properties()
     properties.load(new FileInputStream(propFile))
-    return properties['SDK_KEY']
+    return properties['CONFIG_CAT']
 }
 
 android {
