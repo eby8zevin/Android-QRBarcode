@@ -10,23 +10,14 @@ static def getBuildDate() {
     return formattedDate
 }
 
-/*def localPropertiesFile = rootProject.file("local.properties")
-def localProperties = new Properties()
-localProperties.load(new FileInputStream(localPropertiesFile))
-
-def keystorePropertiesFile = rootProject.file("keystore.properties")
-def keystoreProperties = new Properties()
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))*/
+String getSdkKey() {
+    def propFile = rootProject.file("./local.properties")
+    def properties = new Properties()
+    properties.load(new FileInputStream(propFile))
+    return properties['SDK_KEY']
+}
 
 android {
-    /*signingConfigs {
-        config {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
-        }
-    }*/
 
     compileSdkVersion 32
     buildToolsVersion "32.0.0"
@@ -39,7 +30,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        //buildConfigField("String", "SDK", localProperties["Config_Cat"])
+        buildConfigField("String", "SDK", getSdkKey())
     }
 
     buildTypes {
@@ -47,7 +38,6 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             versionNameSuffix " build:" + BUILD_DATE
-            //signingConfig signingConfigs.config
         }
         debug {
             debuggable true
