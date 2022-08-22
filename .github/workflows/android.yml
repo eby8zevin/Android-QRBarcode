@@ -23,7 +23,7 @@ jobs:
 
     - name: Access ConfigCat
       env:
-        CONFIG_CAT: $
+        CONFIG_CAT: ${{ secrets.CONFIG_CAT }}
       run: echo CONFIG_CAT=\"$CONFIG_CAT\" > ./local.properties
 
     - name: Grant execute permission for gradlew
