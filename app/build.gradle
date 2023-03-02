@@ -10,13 +10,6 @@ static def getBuildDate() {
     return formattedDate
 }
 
-/*String getSdkKey() {
-    def propFile = rootProject.file("./local.properties")
-    def properties = new Properties()
-    properties.load(new FileInputStream(propFile))
-    return properties['CONFIG_CAT']
-}*/
-
 android {
 
     buildToolsVersion "30.0.3"
@@ -30,7 +23,6 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        //buildConfigField("String", "SDK", getSdkKey())
     }
 
     buildTypes {
