@@ -17,4 +17,4 @@ local.properties
 # Keystore files
 *.jks
 /keystore.properties
-*.pepk
+private_key.pepk
