@@ -2,7 +2,6 @@ package com.ahmadabuhasan.qrbarcode;
 
 import android.content.Context;
 import android.os.Handler;
-import android.util.Log;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -19,19 +18,10 @@ public class Utils {
         interstitialAd.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
-                AdsDelay();
-                Log.d("interstitialAd", "Show");
+                if (interstitialAd.isLoaded()) {
+                    interstitialAd.show();
+                }
             }
         });
-    }
-
-    public void AdsDelay() {
-        Handler handler = new Handler();
-        handler.postDelayed(() -> {
-            if (interstitialAd == null || !interstitialAd.isLoaded()) {
-                return;
-            }
-            interstitialAd.show();
-        }, 30000);
     }
 }

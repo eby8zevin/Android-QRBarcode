@@ -30,7 +30,6 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 public class MainActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
 
     private static final int PERMISSION_CODE = 100;
-    //private static final String TAG = "ConfigCat";
     private static final String FLASH_STATE = "FLASH_STATE";
     private static long pressedTime;
     private boolean flashlight;
@@ -50,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         MobileAds.initialize(this, initializationStatus -> {
 
         });
-        new Utils().interstitialAdsShow(this);
         AdRequest adRequest = new AdRequest.Builder().build();
         binding.adView.loadAd(adRequest);
 
@@ -59,8 +57,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
         flashOn();
         flashOff();
-
-        //ConfigCat();
     }
 
     private void flashOn() {
@@ -151,30 +147,9 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     public void onBackPressed() {
         if (pressedTime + 2000 > System.currentTimeMillis()) {
             finishAndRemoveTask();
-            if (Utils.interstitialAd.isLoaded()) {
-                Utils.interstitialAd.show();
-            } else {
-                super.onBackPressed();
-                finish();
-            }
-            finishAndRemoveTask();
         } else {
             Toast.makeText(this, "Press once again to exit", Toast.LENGTH_SHORT).show();
         }
         pressedTime = System.currentTimeMillis();
     }
-
-    /*private void ConfigCat() {
-        String SDK = BuildConfig.SDK;
-        ConfigCatClient client = ConfigCatClient.newBuilder()
-                .logLevel(LogLevel.INFO)
-                .logLevel(LogLevel.DEBUG)
-                .build(SDK);
-
-        User user = User.newBuilder()
-                .email("example@email.com")
-                .build(SDK);
-
-        Log.d(TAG, "ConfigCat: " + client + user);
-    }*/
 }
