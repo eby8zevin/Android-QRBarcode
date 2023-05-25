@@ -11,15 +11,6 @@ static def getBuildDate() {
 }
 
 android {
-    signingConfigs {
-        config {
-            keyAlias'qrbarcode'
-            keyPassword 'QRBarcode2021'
-            storeFile file('../keystore-qrbarcode.jks')
-            storePassword 'QRBarcode2021'
-        }
-    }
-
     buildToolsVersion "30.0.3"
     compileSdkVersion 32
 
@@ -38,7 +29,6 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             versionNameSuffix " build:" + BUILD_DATE
-            signingConfig signingConfigs.config
         }
         debug {
             debuggable true
