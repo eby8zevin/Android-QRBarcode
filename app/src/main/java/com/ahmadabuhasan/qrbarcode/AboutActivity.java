@@ -1,5 +1,7 @@
 package com.ahmadabuhasan.qrbarcode;
 
+import static com.ahmadabuhasan.qrbarcode.Utils.interstitialAd;
+
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -31,9 +33,26 @@ public class AboutActivity extends AppCompatActivity {
         MobileAds.initialize(this, initializationStatus -> {
 
         });
-        new Utils().interstitialAdsShow(this);
+        new Utils().loadAd(this);
+        showInterstitial();
         AdRequest adRequest = new AdRequest.Builder().build();
         binding.adViewAbout.loadAd(adRequest);
+    }
+
+    private void showInterstitial() {
+        // Show the ad if it's ready. Otherwise toast and restart the game.
+        if (interstitialAd != null) {
+            interstitialAd.show(this);
+        } else {
+            startGame();
+        }
+    }
+
+    private void startGame() {
+        // Request a new ad if one isn't already loaded, hide the button, and kick off the timer.
+        if (interstitialAd == null) {
+            new Utils().loadAd(this);
+        }
     }
 
     @Override
