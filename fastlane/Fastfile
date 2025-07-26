@@ -48,7 +48,9 @@ platform :android do
     desc "Deploy latest version to Google Play"
     lane :deployRelease do
       upload_to_play_store(
-           aab: "app/build/outputs/bundle/release/app-release.aab"
+           track: 'production',
+           aab: "app/build/outputs/bundle/release/app-release.aab",
+           json_key: "app/qrbarcode-8b0b8-aaefa03b2374.json"
       )
     end
 
