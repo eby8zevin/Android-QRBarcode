@@ -215,8 +215,10 @@ jobs:
           name: release-aab
           path: app/build/outputs/bundle/release
 
-      - name: Move JSON to app/
-        run: mv *.json app/
+      - name: Move Google Play JSON to app/
+        run: |
+          mkdir -p app/
+          mv secrets/app/${{ env.GOOGLE_PLAY_JSON }} app/
 
       - name: Debug Secrets
         run: ls -la app
@@ -252,9 +254,6 @@ jobs:
           name: release-aab
           path: app/build/outputs/bundle/release
 
-      - name: Debug Secrets
-        run: ls -la app
-
       - run: bundle exec fastlane deployBeta
 
   deploy-firebase-internal:
@@ -285,8 +284,5 @@ jobs:
         with:
           name: release-aab
           path: app/build/outputs/bundle/release
-
-      - name: Debug Secrets
-        run: ls -la app
 
       - run: bundle exec fastlane deployFirebase --verbose
