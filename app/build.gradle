@@ -11,42 +11,24 @@ static def getBuildDate() {
     return formattedDate
 }
 
-
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file("local.properties")
 if (localPropertiesFile.exists()) {
     localProperties.load(new FileInputStream(localPropertiesFile))
+} else {
+    localProperties.setProperty("KEYSTORE_FILE", "keystore-qrbarcode.jks")
+    localProperties.setProperty("KEYSTORE_PASSWORD", System.getenv("KEYSTORE_PASSWORD"))
+    localProperties.setProperty("KEY_ALIAS", System.getenv("KEY_ALIAS"))
+    localProperties.setProperty("KEY_PASSWORD", System.getenv("KEY_PASSWORD"))
 }
-
-def debugKeystoreFile = localProperties["KEYSTORE_FILE"]
-def debugKeystorePassword = localProperties["KEYSTORE_PASSWORD"]
-def debugKeyAlias = localProperties["KEY_ALIAS"]
-def debugKeyPassword = localProperties["KEY_PASSWORD"]
-
-
-def releaseKeystoreFilePath = System.getenv("KEYSTORE_FILE")
-def releaseKeystorePassword = System.getenv("KEYSTORE_PASSWORD")
-def releaseKeyAlias = System.getenv("KEY_ALIAS")
-def releaseKeyPassword = System.getenv("KEY_PASSWORD")
-
-def hasKeystore = releaseKeystoreFilePath != null && !releaseKeystoreFilePath.trim().isEmpty()
 
 android {
     signingConfigs {
-        if (hasKeystore) {
-            release {
-                storeFile file(releaseKeystoreFilePath)
-                storePassword releaseKeystorePassword
-                keyAlias releaseKeyAlias
-                keyPassword releaseKeyPassword
-            }
-        } else {
-            debug {
-                storeFile file(debugKeystoreFile)
-                storePassword debugKeystorePassword
-                keyAlias debugKeyAlias
-                keyPassword debugKeyPassword
-            }
+        release {
+            storeFile file(localProperties.getProperty("KEYSTORE_FILE"))
+            storePassword localProperties.getProperty("KEYSTORE_PASSWORD")
+            keyAlias localProperties.getProperty("KEY_ALIAS")
+            keyPassword localProperties.getProperty("KEY_PASSWORD")
         }
     }
 
@@ -68,7 +50,7 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             versionNameSuffix " build:" + BUILD_DATE
-            signingConfig hasKeystore ? signingConfigs.release : signingConfigs.debug
+            signingConfig signingConfigs.release
         }
         debug {
             debuggable true
