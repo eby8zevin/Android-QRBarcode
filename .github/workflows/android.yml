@@ -50,6 +50,11 @@ jobs:
           bundle config set path 'vendor/bundle'
           bundle install
 
+      - name: Generate local.properties from example
+        run: |
+          chmod +x ./scripts/before-ci.sh
+          ./scripts/before-ci.sh
+
       - name: Decode Keystore File
         run: echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > "app/${{ env.KEYSTORE_FILE }}"
 
