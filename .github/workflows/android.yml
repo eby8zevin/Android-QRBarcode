@@ -215,6 +215,9 @@ jobs:
           name: release-aab
           path: app/build/outputs/bundle/release
 
+      - name: Debug Secrets
+        run: ls -la app
+
       - run: bundle exec fastlane deployRelease
 
   deploy-beta:
@@ -246,6 +249,9 @@ jobs:
           name: release-aab
           path: app/build/outputs/bundle/release
 
+      - name: Debug Secrets
+        run: ls -la app
+
       - run: bundle exec fastlane deployBeta
 
   deploy-firebase-internal:
@@ -276,5 +282,8 @@ jobs:
         with:
           name: release-aab
           path: app/build/outputs/bundle/release
+
+      - name: Debug Secrets
+        run: ls -la app
 
       - run: bundle exec fastlane deployFirebase --verbose
