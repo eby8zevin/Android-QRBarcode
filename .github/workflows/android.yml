@@ -13,11 +13,16 @@ env:
   KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
   KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
   KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+  GOOGLE_PLAY_JSON_PATH: app/qrbarcode-8b0b8-aaefa03b2374.json
 
 jobs:
-  build-bundle:
-    name: Build AAB
+  setup:
+    name: Setup Environment
     runs-on: ubuntu-latest
+    container:
+      image: softartdev/android-fastlane:33
+    outputs:
+      bundle-path: ${{ steps.set-bundle-path.outputs.bundle-path }}
 
     steps:
       - name: Checkout Repository
@@ -32,15 +37,33 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+
+      - name: Set Bundle Path Output
+        id: set-bundle-path
+        run: echo "bundle-path=${HOME}/.gem/ruby/3.2.0/bin" >> $GITHUB_OUTPUT
+
+      - name: Cache Ruby Gems
+        uses: actions/cache@v4
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+
       - name: Install Bundler & Fastlane
         run: |
           gem install bundler:2.5.11 --user-install
           bundle _2.5.11_ config set path vendor/bundle
           bundle _2.5.11_ install
         env:
-          PATH: "${HOME}/.gem/ruby/3.2.0/bin:${PATH}"
+          PATH: "${{ steps.set-bundle-path.outputs.bundle-path }}:${PATH}"
 
-      - name: Setup local.properties
+      - name: Decode Keystore File
+        run: echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > $KEYSTORE_FILE
+
+      - name: Write local.properties
         run: |
           echo "sdk.dir=$ANDROID_HOME" > local.properties
           echo "KEYSTORE_FILE=$KEYSTORE_FILE" >> local.properties
@@ -48,18 +71,23 @@ jobs:
           echo "KEY_ALIAS=$KEY_ALIAS" >> local.properties
           echo "KEY_PASSWORD=$KEY_PASSWORD" >> local.properties
 
-      - name: Decode keystore file
-        run: echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > $KEYSTORE_FILE
-
-      - name: Create Service Account JSON (base64)
+      - name: Create Google Service Account JSON
         run: |
           mkdir -p app
-          echo "${{ secrets.GOOGLE_PLAY_JSON }}" | base64 --decode > app/qrbarcode-8b0b8-aaefa03b2374.json
+          echo "${{ secrets.GOOGLE_PLAY_JSON }}" | base64 --decode > ${{ env.GOOGLE_PLAY_JSON_PATH }}
+
+  build:
+    name: Build AAB
+    runs-on: ubuntu-latest
+    needs: setup
+
+    steps:
+      - uses: actions/checkout@v3
 
       - name: Run buildBundle lane
         run: bundle exec fastlane buildBundle
         env:
-          PATH: "${HOME}/.gem/ruby/3.2.0/bin:${PATH}"
+          PATH: "${{ needs.setup.outputs.bundle-path }}:${PATH}"
 
       - name: Upload Bundle Artifact
         uses: actions/upload-artifact@v4
@@ -70,33 +98,19 @@ jobs:
   unit-test:
     name: Unit Tests
     runs-on: ubuntu-latest
-    needs: build-bundle
+    needs: build
 
     steps:
       - uses: actions/checkout@v3
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Install Bundler & Dependencies
-        run: |
-          gem install bundler:2.5.11 --user-install
-          bundle _2.5.11_ config set path vendor/bundle
-          bundle _2.5.11_ install
-        env:
-          PATH: "${HOME}/.gem/ruby/3.2.0/bin:${PATH}"
-
-      - name: Run Fastlane Test
+      - name: Run Tests
         run: bundle exec fastlane test
         env:
-          PATH: "${HOME}/.gem/ruby/3.2.0/bin:${PATH}"
+          PATH: "${{ needs.setup.outputs.bundle-path }}:${PATH}"
 
   code-analysis:
     name: Lint & Check
     runs-on: ubuntu-latest
-    needs: build-bundle
+    needs: build
 
     steps:
       - uses: actions/checkout@v3
@@ -114,84 +128,37 @@ jobs:
     name: Deploy to Play Store (Production)
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
-    needs: build-bundle
+    needs: build
 
     steps:
       - uses: actions/checkout@v3
-      - name: Setup
-        run: |
-          gem install bundler:2.5.11 --user-install
-          bundle _2.5.11_ config set path vendor/bundle
-          bundle _2.5.11_ install
-          echo "${{ secrets.GOOGLE_PLAY_JSON }}" | base64 --decode > app/qrbarcode-8b0b8-aaefa03b2374.json
-        env:
-          PATH: "${HOME}/.gem/ruby/3.2.0/bin:${PATH}"
-
       - name: Deploy
         run: bundle exec fastlane deployRelease
         env:
-          PATH: "${HOME}/.gem/ruby/3.2.0/bin:${PATH}"
+          PATH: "${{ needs.setup.outputs.bundle-path }}:${PATH}"
 
   deploy-beta:
     name: Deploy to Play Store (Beta)
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/development'
-    needs: build-bundle
+    needs: build
 
     steps:
       - uses: actions/checkout@v3
-      - name: Setup
-        run: |
-          gem install bundler:2.5.11 --user-install
-          bundle _2.5.11_ config set path vendor/bundle
-          bundle _2.5.11_ install
-          echo "${{ secrets.GOOGLE_PLAY_JSON }}" | base64 --decode > app/qrbarcode-8b0b8-aaefa03b2374.json
-        env:
-          PATH: "${HOME}/.gem/ruby/3.2.0/bin:${PATH}"
-
       - name: Deploy
         run: bundle exec fastlane deployBeta
         env:
-          PATH: "${HOME}/.gem/ruby/3.2.0/bin:${PATH}"
-
-  deploy-firebase-beta:
-    name: Distribute via Firebase (Beta)
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/development'
-    needs: build-bundle
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup
-        run: |
-          gem install bundler:2.5.11 --user-install
-          bundle _2.5.11_ config set path vendor/bundle
-          bundle _2.5.11_ install
-        env:
-          PATH: "${HOME}/.gem/ruby/3.2.0/bin:${PATH}"
-
-      - name: Deploy
-        run: bundle exec fastlane deployFirebase --verbose
-        env:
-          PATH: "${HOME}/.gem/ruby/3.2.0/bin:${PATH}"
+          PATH: "${{ needs.setup.outputs.bundle-path }}:${PATH}"
 
   deploy-firebase-internal:
     name: Distribute via Firebase (Internal)
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/heads/internal-testing/')
-    needs: build-bundle
+    needs: build
 
     steps:
       - uses: actions/checkout@v3
-      - name: Setup
-        run: |
-          gem install bundler:2.5.11 --user-install
-          bundle _2.5.11_ config set path vendor/bundle
-          bundle _2.5.11_ install
-        env:
-          PATH: "${HOME}/.gem/ruby/3.2.0/bin:${PATH}"
-
       - name: Deploy
         run: bundle exec fastlane deployFirebase --verbose
         env:
-          PATH: "${HOME}/.gem/ruby/3.2.0/bin:${PATH}"
+          PATH: "${{ needs.setup.outputs.bundle-path }}:${PATH}"
