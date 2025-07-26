@@ -19,8 +19,8 @@ jobs:
   setup:
     name: Setup Environment
     runs-on: ubuntu-latest
-    container:
-      image: softartdev/android-fastlane:33
+#    container:
+#      image: softartdev/android-fastlane:33
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
