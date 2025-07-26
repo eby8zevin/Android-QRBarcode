@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  KEYSTORE_FILE: app/keystore-qrbarcode.jks
+  KEYSTORE_FILE: keystore-qrbarcode.jks
   KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
   KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
   KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
@@ -51,7 +51,7 @@ jobs:
           bundle install
 
       - name: Decode Keystore File
-        run: echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > "${{ env.KEYSTORE_FILE }}"
+        run: echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > "app/${{ env.KEYSTORE_FILE }}"
 
       - name: Write local.properties
         run: |
