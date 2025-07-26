@@ -34,7 +34,7 @@ jobs:
 
       - name: Install Bundler & Fastlane
         run: |
-          gem install bundler
+          sudo gem install bundler
           bundle install
 
       - name: Setup local.properties
@@ -76,7 +76,7 @@ jobs:
           distribution: 'temurin'
       - name: Run Fastlane Test
         run: |
-          gem install bundler
+          sudo gem install bundler
           bundle install
           bundle exec fastlane test
 
@@ -107,7 +107,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Setup
         run: |
-          gem install bundler
+          sudo gem install bundler
           bundle install
           echo "${{ secrets.GOOGLE_PLAY_JSON }}" | base64 --decode > app/qrbarcode-8b0b8-aaefa03b2374.json
       - name: Deploy
@@ -123,7 +123,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Setup
         run: |
-          gem install bundler
+          sudo gem install bundler
           bundle install
           echo "${{ secrets.GOOGLE_PLAY_JSON }}" | base64 --decode > app/qrbarcode-8b0b8-aaefa03b2374.json
       - name: Deploy
@@ -139,7 +139,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Setup
         run: |
-          gem install bundler
+          sudo gem install bundler
           bundle install
       - name: Deploy
         run: bundle exec fastlane deployFirebaseBeta
@@ -154,7 +154,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Setup
         run: |
-          gem install bundler
+          sudo gem install bundler
           bundle install
       - name: Deploy
         run: bundle exec fastlane deployFirebase --verbose
