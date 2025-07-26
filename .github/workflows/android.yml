@@ -218,6 +218,11 @@ jobs:
           bundle config set path 'vendor/bundle'
           bundle install
 
+      - name: Download Secrets
+        uses: actions/download-artifact@v4
+        with:
+          name: secrets
+
       - name: Download built AAB
         uses: actions/download-artifact@v4
         with:
