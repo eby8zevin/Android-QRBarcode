@@ -50,21 +50,29 @@ jobs:
           bundle config set path 'vendor/bundle'
           bundle install
 
-      - name: Generate local.properties from example
+      - name: Setup before script
         run: |
+          chmod +x ./gradlew
           chmod +x ./scripts/before-ci.sh
+          touch local.properties
           ./scripts/before-ci.sh
+          echo "sdk.dir=$ANDROID_HOME" >> local.properties
 
       - name: Decode Keystore File
-        run: echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > "app/${{ env.KEYSTORE_FILE }}"
+        run: echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > "${{ env.KEYSTORE_FILE }}"
 
       - name: Write local.properties
         run: |
-          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          echo "sdk.dir=$ANDROID_HOME" >> local.properties
           echo "KEYSTORE_FILE=${{ env.KEYSTORE_FILE }}" >> local.properties
           echo "KEYSTORE_PASSWORD=${{ env.KEYSTORE_PASSWORD }}" >> local.properties
           echo "KEY_ALIAS=${{ env.KEY_ALIAS }}" >> local.properties
           echo "KEY_PASSWORD=${{ env.KEY_PASSWORD }}" >> local.properties
+
+      - name: Debug keystore
+        run: |
+          cat local.properties
+          ls -la app
 
       - name: Create Google Service Account JSON
         run: |
