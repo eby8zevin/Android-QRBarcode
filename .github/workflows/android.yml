@@ -209,6 +209,12 @@ jobs:
           bundle config set path 'vendor/bundle'
           bundle install
 
+      - name: Download built AAB
+        uses: actions/download-artifact@v4
+        with:
+          name: release-aab
+          path: app/build/outputs/bundle/release
+
       - run: bundle exec fastlane deployRelease
 
   deploy-beta:
@@ -234,6 +240,12 @@ jobs:
           bundle config set path 'vendor/bundle'
           bundle install
 
+      - name: Download built AAB
+        uses: actions/download-artifact@v4
+        with:
+          name: release-aab
+          path: app/build/outputs/bundle/release
+
       - run: bundle exec fastlane deployBeta
 
   deploy-firebase-internal:
@@ -258,5 +270,11 @@ jobs:
       - run: |
           bundle config set path 'vendor/bundle'
           bundle install
+
+      - name: Download built AAB
+        uses: actions/download-artifact@v4
+        with:
+          name: release-aab
+          path: app/build/outputs/bundle/release
 
       - run: bundle exec fastlane deployFirebase --verbose
