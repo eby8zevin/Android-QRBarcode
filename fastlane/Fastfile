@@ -50,7 +50,7 @@ platform :android do
       upload_to_play_store(
            track: 'production',
            aab: "app/build/outputs/bundle/release/app-release.aab",
-           json_key: "app/qrbarcode-8b0b8-aaefa03b2374.json"
+           json_key: "app/#{ENV['GOOGLE_PLAY_JSON']}"
       )
     end
 
