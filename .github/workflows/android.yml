@@ -61,12 +61,11 @@ jobs:
       - name: Create Google Service Account JSON
         run: echo "${{ secrets.GOOGLE_PLAY_JSON }}" | base64 -d > app/${{ env.GOOGLE_PLAY_JSON }}
 
-      - name: Debug Check if service account JSON exists
+      - name: Debug directory
         run: |
-          echo "Listing app/ folder:"
+          ls -l
+          echo ""
           ls -l app/
-          echo "Showing first 10 lines of the JSON file:"
-          head -n 10 app/${{ env.GOOGLE_PLAY_JSON }}
 
       - name: Upload Secrets
         uses: actions/upload-artifact@v4
@@ -113,7 +112,11 @@ jobs:
         with:
           name: secrets
 
-      - run: ls -la app/
+      - name: Debug directory
+        run: |
+          ls -l
+          echo ""
+          ls -l app/
 
       - name: Write local.properties
         run: |
@@ -221,7 +224,11 @@ jobs:
           name: release-aab
           path: app/build/outputs/bundle/release
 
-      - run: ls -la app/
+      - name: Debug directory
+        run: |
+          ls -l
+          echo ""
+          ls -l app/
 
       - run: bundle exec fastlane deployRelease
 
