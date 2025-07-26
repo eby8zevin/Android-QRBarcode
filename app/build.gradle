@@ -11,16 +11,54 @@ static def getBuildDate() {
     return formattedDate
 }
 
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(new FileInputStream(localPropertiesFile))
+}
+
+def debugKeystoreFile = localProperties["KEYSTORE_FILE"]
+def debugKeystorePassword = localProperties["KEYSTORE_PASSWORD"]
+def debugKeyAlias = localProperties["KEY_ALIAS"]
+def debugKeyPassword = localProperties["KEY_PASSWORD"]
+
+
+def releaseKeystoreFilePath = System.getenv("KEYSTORE_FILE")
+def releaseKeystorePassword = System.getenv("KEYSTORE_PASSWORD")
+def releaseKeyAlias = System.getenv("KEY_ALIAS")
+def releaseKeyPassword = System.getenv("KEY_PASSWORD")
+
+def hasKeystore = releaseKeystoreFilePath != null && !releaseKeystoreFilePath.trim().isEmpty()
+
 android {
+    signingConfigs {
+        if (hasKeystore) {
+            release {
+                storeFile file(releaseKeystoreFilePath)
+                storePassword releaseKeystorePassword
+                keyAlias releaseKeyAlias
+                keyPassword releaseKeyPassword
+            }
+        } else {
+            debug {
+                storeFile file(debugKeystoreFile)
+                storePassword debugKeystorePassword
+                keyAlias debugKeyAlias
+                keyPassword debugKeyPassword
+            }
+        }
+    }
+
     namespace 'com.ahmadabuhasan.qrbarcode'
-    compileSdkVersion 34
+    compileSdkVersion 35
 
     defaultConfig {
         applicationId "com.ahmadabuhasan.qrbarcode"
         minSdkVersion 23
-        targetSdkVersion 34
-        versionCode 4
-        versionName "1.0.3"
+        targetSdkVersion 35
+        versionCode 5
+        versionName "1.0.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -30,6 +68,7 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             versionNameSuffix " build:" + BUILD_DATE
+            signingConfig hasKeystore ? signingConfigs.release : signingConfigs.debug
         }
         debug {
             debuggable true
@@ -37,8 +76,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     buildFeatures {
@@ -56,8 +95,8 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     implementation 'com.google.android.play:app-update:2.1.0'
-    implementation 'com.google.android.gms:play-services-ads:22.1.0'
-    implementation platform('com.google.firebase:firebase-bom:32.0.0')
+    implementation 'com.google.android.gms:play-services-ads:24.5.0'
+    implementation platform('com.google.firebase:firebase-bom:34.0.0')
     implementation 'com.google.firebase:firebase-analytics'
 
     implementation 'me.dm7.barcodescanner:zxing:1.9.8'
