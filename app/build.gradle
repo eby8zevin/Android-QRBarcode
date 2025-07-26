@@ -16,7 +16,7 @@ def localPropertiesFile = rootProject.file("local.properties")
 if (localPropertiesFile.exists()) {
     localProperties.load(new FileInputStream(localPropertiesFile))
 } else {
-    localProperties.setProperty("KEYSTORE_FILE", "keystore-qrbarcode.jks")
+    localProperties.setProperty("KEYSTORE_FILE", System.getenv("KEYSTORE_FILE"))
     localProperties.setProperty("KEYSTORE_PASSWORD", System.getenv("KEYSTORE_PASSWORD"))
     localProperties.setProperty("KEY_ALIAS", System.getenv("KEY_ALIAS"))
     localProperties.setProperty("KEY_PASSWORD", System.getenv("KEY_PASSWORD"))
