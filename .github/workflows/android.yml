@@ -59,7 +59,14 @@ jobs:
         run: echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > ${{ env.KEYSTORE_FILE }}
 
       - name: Create Google Service Account JSON
-        run: echo "${{ secrets.GOOGLE_PLAY_JSON }}" | base64 -d > ${{ env.GOOGLE_PLAY_JSON }}
+        run: echo "${{ secrets.GOOGLE_PLAY_JSON }}" | base64 -d > app/${{ env.GOOGLE_PLAY_JSON }}
+
+      - name: Debug Check if service account JSON exists
+        run: |
+          echo "Listing app/ folder:"
+          ls -l app/
+          echo "Showing first 10 lines of the JSON file:"
+          head -n 10 app/${{ env.GOOGLE_PLAY_JSON }}
 
       - name: Upload Secrets
         uses: actions/upload-artifact@v4
@@ -67,7 +74,7 @@ jobs:
           name: secrets
           path: |
             ${{ env.KEYSTORE_FILE }}
-            ${{ env.GOOGLE_PLAY_JSON }}
+            app/${{ env.GOOGLE_PLAY_JSON }}
 
   build:
     name: Build AAB
@@ -106,8 +113,7 @@ jobs:
         with:
           name: secrets
 
-      - name: Debug Secrets
-        run: ls -la .
+      - run: ls -la app/
 
       - name: Write local.properties
         run: |
@@ -215,13 +221,7 @@ jobs:
           name: release-aab
           path: app/build/outputs/bundle/release
 
-      - name: Move Google Play JSON to app/
-        run: |
-          mkdir -p app/
-          mv secrets/app/${{ env.GOOGLE_PLAY_JSON }} app/
-
-      - name: Debug Secrets
-        run: ls -la app
+      - run: ls -la app/
 
       - run: bundle exec fastlane deployRelease
 
