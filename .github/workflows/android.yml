@@ -10,7 +10,7 @@ on:
 
 env:
   KEYSTORE_FILE: keystore-qrbarcode.jks
-  GOOGLE_PLAY_JSON_PATH: app/qrbarcode-8b0b8-aaefa03b2374.json
+  GOOGLE_PLAY_JSON: qrbarcode-8b0b8-aaefa03b2374.json
   KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
   KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
   KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
@@ -59,7 +59,7 @@ jobs:
         run: echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > ${{ env.KEYSTORE_FILE }}
 
       - name: Create Google Service Account JSON
-        run: echo "${{ secrets.GOOGLE_PLAY_JSON }}" | base64 -d > ${{ env.GOOGLE_PLAY_JSON_PATH }}
+        run: echo "${{ secrets.GOOGLE_PLAY_JSON }}" | base64 -d > ${{ env.GOOGLE_PLAY_JSON }}
 
       - name: Upload Secrets
         uses: actions/upload-artifact@v4
@@ -67,7 +67,7 @@ jobs:
           name: secrets
           path: |
             ${{ env.KEYSTORE_FILE }}
-            ${{ env.GOOGLE_PLAY_JSON_PATH }}
+            ${{ env.GOOGLE_PLAY_JSON }}
 
   build:
     name: Build AAB
@@ -214,6 +214,9 @@ jobs:
         with:
           name: release-aab
           path: app/build/outputs/bundle/release
+
+      - name: Move JSON to app/
+        run: mv *.json app/
 
       - name: Debug Secrets
         run: ls -la app
