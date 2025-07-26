@@ -5,7 +5,7 @@ on:
     branches:
       - development
       - master
-      - /^internal-testing\/.*$/
+      - internal-testing/**
   workflow_dispatch:
 
 env:
