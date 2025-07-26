@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  KEYSTORE_FILE: app/keystore-qrbarcode.jks
+  KEYSTORE_FILE: keystore-qrbarcode.jks
   KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
   KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
   KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
@@ -51,7 +51,7 @@ jobs:
           bundle install
 
       - name: Decode Keystore File
-        run: echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > ${{ env.KEYSTORE_FILE }}
+        run: echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > app/${{ env.KEYSTORE_FILE }}
 
       - name: Create Google Service Account JSON
         run: |
@@ -90,15 +90,21 @@ jobs:
           bundle install
 
       - name: Decode Keystore File
-        run: echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > ${{ env.KEYSTORE_FILE }}
+        run: echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > app/${{ env.KEYSTORE_FILE }}
+
+      - name: Debug keystore file
+        run: ls -la app
 
       - name: Write local.properties
         run: |
           echo "sdk.dir=$ANDROID_HOME" > local.properties
-          echo "KEYSTORE_FILE=${{ env.KEYSTORE_FILE }}" >> local.properties
+          echo "KEYSTORE_FILE=app/${{ env.KEYSTORE_FILE }}" >> local.properties
           echo "KEYSTORE_PASSWORD=${{ env.KEYSTORE_PASSWORD }}" >> local.properties
           echo "KEY_ALIAS=${{ env.KEY_ALIAS }}" >> local.properties
           echo "KEY_PASSWORD=${{ env.KEY_PASSWORD }}" >> local.properties
+          
+      - name: Debug local.properties
+        run: cat local.properties
 
       - name: Create Google Service Account JSON
         run: |
